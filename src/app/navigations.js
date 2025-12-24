@@ -1,14 +1,20 @@
-const navigations = [
-  { name: "Page 1", path: "/dashboard/default", icon: "dashboard" },
-  { label: "PAGES", type: "label" },
-  {
-    name: "Page 2",
-    icon: "trending_up",
-    children: [
-      { name: "Dummy Page 1", path: "/dummy1", iconText: "D1" },
-      { name: "Dummy Page 2", path: "/dummy2", iconText: "D2" }
-    ]
-  }
+// Define distinct navigation arrays for each role
+export const adminNavigation = [
+  { name: 'Dashboard', path: '/dashboard/default', icon: 'dashboard' },
+  { label: 'Management', type: 'label' },
+  { name: 'Invite Users', path: '/admin/invite', icon: 'group_add' }, // We'll build this later
+  { name: 'Verifications', path: '/dashboard/default', icon: 'verified_user' },
 ];
 
-export default navigations;
+export const studentNavigation = [
+  { name: 'My Dashboard', path: '/dashboard/default', icon: 'dashboard' },
+  { label: 'Application', type: 'label' },
+  { name: 'My Profile', path: '/onboarding/student', icon: 'person' }, // Links back to form for editing
+];
+
+export const facultyNavigation = [
+  { name: 'My Dashboard', path: '/dashboard/default', icon: 'dashboard' },
+  { label: 'Professional', type: 'label' },
+  { name: 'My Profile', path: '/onboarding/faculty', icon: 'school' },
+];
+

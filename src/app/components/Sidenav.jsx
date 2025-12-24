@@ -4,7 +4,8 @@ import styled from "@mui/material/styles/styled";
 
 import { ParcVerticalNav } from "app/components";
 import useSettings from "app/hooks/useSettings";
-import navigations from "app/navigations";
+import useAuth from "app/hooks/useAuth"; // Added to access user role
+import { adminNavigation, studentNavigation, facultyNavigation } from '/src/app/navigations.js';
 
 // STYLED COMPONENTS
 const StyledScrollBar = styled(Scrollbar)(() => ({
@@ -27,6 +28,18 @@ const SideNavMobile = styled("div")(({ theme }) => ({
 
 export default function Sidenav({ children }) {
   const { settings, updateSettings } = useSettings();
+  const { user } = useAuth(); // Get the current user
+
+  // Logic to determine which navigation to show
+  let navigationItems = studentNavigation; // Default fallback
+
+  if (user?.role === 'admin') {
+    navigationItems = adminNavigation;
+  } else if (user?.role === 'faculty') {
+    navigationItems = facultyNavigation;
+  } else {
+    navigationItems = studentNavigation;
+  }
 
   const updateSidebarMode = (sidebarSettings) => {
     let activeLayoutSettingsName = settings.activeLayout + "Settings";
@@ -45,7 +58,8 @@ export default function Sidenav({ children }) {
     <Fragment>
       <StyledScrollBar options={{ suppressScrollX: true }}>
         {children}
-        <ParcVerticalNav items={navigations} />
+        {/* Pass the dynamic navigationItems instead of the undefined 'navigations' */}
+        <ParcVerticalNav items={navigationItems} />
       </StyledScrollBar>
 
       <SideNavMobile onClick={() => updateSidebarMode({ mode: "close" })} />
