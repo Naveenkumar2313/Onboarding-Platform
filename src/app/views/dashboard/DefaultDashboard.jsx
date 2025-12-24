@@ -1,10 +1,13 @@
 import { styled } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
 
-// Import the specific dashboard views
-import StudentDashboard from './StudentDashboard';
-import FacultyDashboard from './FacultyDashboard';
-import AdminDashboard from './AdminDashboard'; // We will create this file next
+// CORRECTED IMPORTS
+// These are in the 'onboarding' folder, so we go up one level (../) and into 'onboarding'
+import StudentDashboard from '../onboarding/StudentDashboard';
+import FacultyDashboard from '../onboarding/FacultyDashboard';
+
+// AdminDashboard is in the same 'dashboard' folder, so this stays the same
+import AdminDashboard from './AdminDashboard'; 
 
 // Styled container for the fallback view
 const Container = styled('div')(({ theme }) => ({
