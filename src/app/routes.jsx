@@ -1,41 +1,39 @@
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
-import Loadable from "./components/Loadable"; // Ensure you have this or use React.Suspense
+import Loadable from "./components/Loadable";
 import ParcLayout from "./components/ParcLayout/ParcLayout";
-import AuthGuard from "./components/auth/AuthGuard"; // We'll add this next for security
 
-// LAZY LOAD COMPONENTS
-const JwtLogin = Loadable(lazy(() => import("./views/sessions/JwtLogin")));
+// FIX: Point to components/auth/AuthGuard
+import AuthGuard from "./components/auth/AuthGuard"; 
+
+import JwtLogin from "./views/sessions/JwtLogin"; 
+
 const DefaultDashboard = Loadable(lazy(() => import("./views/dashboard/DefaultDashboard")));
+const StudentOnboarding = Loadable(lazy(() => import("./views/onboarding/StudentOnboarding")));
 
-// Placeholder for Onboarding (We will build these next)
-const StudentOnboarding = () => <h1>Student Onboarding Form</h1>;
+// Placeholder Components
 const FacultyOnboarding = () => <h1>Faculty Onboarding Form</h1>;
 
 const routes = [
-  { path: "/", element: <Navigate to="dashboard/default" /> },
+  { path: "/", element: <Navigate to="/dashboard/default" /> },
   
-  // SESSION ROUTES (Public)
+  // SESSION ROUTES
   { path: "/session/signin", element: <JwtLogin /> },
   
   // PROTECTED ROUTES
   {
     element: (
-       // AuthGuard ensures only logged-in users can see this
-      // <AuthGuard> 
+      <AuthGuard>
         <ParcLayout />
-      // </AuthGuard>
+      </AuthGuard>
     ),
     children: [
       { path: "/dashboard/default", element: <DefaultDashboard /> },
-      
-      // ONBOARDING ROUTES
       { path: "/onboarding/student", element: <StudentOnboarding /> },
       { path: "/onboarding/faculty", element: <FacultyOnboarding /> },
     ]
   },
   
-  // Catch-all
   { path: "*", element: <Navigate to="/session/signin" /> }
 ];
 

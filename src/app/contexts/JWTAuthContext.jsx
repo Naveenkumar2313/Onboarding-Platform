@@ -1,7 +1,6 @@
 import { createContext, useEffect, useReducer } from 'react';
 import AuthService from '../services/AuthService';
 
-// Initial State
 const initialState = {
   isAuthenticated: false,
   isInitialised: false,
@@ -11,12 +10,10 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isAuthenticated, user } = action.payload;
-      return { ...state, isAuthenticated, isInitialised: true, user };
+      return { ...state, isAuthenticated: action.payload.isAuthenticated, isInitialised: true, user: action.payload.user };
     }
     case 'LOGIN': {
-      const { user } = action.payload;
-      return { ...state, isAuthenticated: true, user };
+      return { ...state, isAuthenticated: true, user: action.payload.user };
     }
     case 'LOGOUT': {
       return { ...state, isAuthenticated: false, user: null };
@@ -36,9 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const user = await AuthService.login(email, password);
-    // Save to LocalStorage to persist login on refresh
-    localStorage.setItem('user', JSON.stringify(user)); 
-
+    localStorage.setItem('user', JSON.stringify(user));
     dispatch({ type: 'LOGIN', payload: { user } });
   };
 
@@ -48,16 +43,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Check LocalStorage on app load
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      dispatch({ type: 'INIT', payload: { isAuthenticated: true, user: JSON.parse(storedUser) } });
-    } else {
+    console.log("Auth Provider: Checking storage..."); // DEBUG LOG
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        console.log("Auth Provider: Found user", storedUser); // DEBUG LOG
+        dispatch({ type: 'INIT', payload: { isAuthenticated: true, user: JSON.parse(storedUser) } });
+      } else {
+        console.log("Auth Provider: No user found"); // DEBUG LOG
+        dispatch({ type: 'INIT', payload: { isAuthenticated: false, user: null } });
+      }
+    } catch (err) {
+      console.error("Auth Provider Error:", err);
       dispatch({ type: 'INIT', payload: { isAuthenticated: false, user: null } });
     }
   }, []);
 
-  if (!state.isInitialised) return <div>Loading...</div>;
+  // If this text appears on your screen, the app is stuck here
+  if (!state.isInitialised) return <div>Initializing Authentication...</div>;
 
   return (
     <AuthContext.Provider value={{ ...state, login, logout }}>

@@ -19,7 +19,7 @@
       "id": "3",
       "email": "faculty@test.edu",
       "password": "123",
-      "role": "faculty", 
+      "role": "faculty",
       "name": "Dr. Smith",
       "is_verified": false
     }

@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+// FIX: Remove curly braces to use default import
+import useAuth from "../../hooks/useAuth"; 
 
 const AuthGuard = ({ children }) => {
   const { isAuthenticated } = useAuth();
