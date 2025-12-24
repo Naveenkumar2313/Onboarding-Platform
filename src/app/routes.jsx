@@ -10,9 +10,7 @@ import JwtLogin from "./views/sessions/JwtLogin";
 
 const DefaultDashboard = Loadable(lazy(() => import("./views/dashboard/DefaultDashboard")));
 const StudentOnboarding = Loadable(lazy(() => import("./views/onboarding/StudentOnboarding")));
-
-// Placeholder Components
-const FacultyOnboarding = () => <h1>Faculty Onboarding Form</h1>;
+const FacultyOnboarding = Loadable(lazy(() => import("./views/onboarding/FacultyOnboarding")));
 
 const routes = [
   { path: "/", element: <Navigate to="/dashboard/default" /> },

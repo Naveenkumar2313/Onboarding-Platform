@@ -24,6 +24,35 @@
       "is_verified": false
     }
   ],
-  "profiles": [],
+  "profiles": [
+    {
+      "id": "22cc",
+      "userId": "3",
+      "userRole": "faculty",
+      "phone": "9886414551",
+      "address": "sf",
+      "joiningDate": "2025-12-24",
+      "department": "CSE",
+      "designation": "Assistant Professor",
+      "qualification": "sdf",
+      "experience": 32,
+      "documents": "",
+      "status": "Verified",
+      "submittedAt": "2025-12-24T10:22:52.525Z"
+    },
+    {
+      "id": "8eed",
+      "userId": "2",
+      "phone": "9886414559",
+      "address": "fdsafads",
+      "dob": "2025-12-02",
+      "institution": "kssem",
+      "grade": "33",
+      "year": 3323,
+      "documents": "",
+      "status": "Pending Verification",
+      "submittedAt": "2025-12-24T10:23:40.929Z"
+    }
+  ],
   "invites": []
 }
