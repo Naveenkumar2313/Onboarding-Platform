@@ -4,17 +4,25 @@ import styled from "@mui/material/styles/styled";
 
 import { ParcVerticalNav } from "app/components";
 import useSettings from "app/hooks/useSettings";
+import useAuth from "app/hooks/useAuth"; 
+
+// Import the specific navigation arrays from your project
+import { 
+  adminNavigation, 
+  studentNavigation, 
+  facultyNavigation 
+} from "app/navigations"; 
 
 // STYLED COMPONENTS
 const StyledScrollBar = styled(Scrollbar)(() => ({
   paddingLeft: "1rem",
   paddingRight: "1rem",
   position: "relative",
-  // Ensure the scrollbar fills the parent container from Layout1Sidenav
-  width: "100%",
-  height: "100%", 
+  // FIX: This ensures the scrollbar area grows to fill the gap
+  flexGrow: 1, 
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  overflow: "hidden" 
 }));
 
 const SideNavMobile = styled("div")(({ theme }) => ({
@@ -29,9 +37,17 @@ const SideNavMobile = styled("div")(({ theme }) => ({
   [theme.breakpoints.up("lg")]: { display: "none" }
 }));
 
-// FIX: Added 'items' to props so it receives the data from Layout1Sidenav
-export default function Sidenav({ items, children }) {
+export default function Sidenav({ children }) {
   const { settings, updateSettings } = useSettings();
+  const { user } = useAuth(); // Get User Role
+
+  // --- LOGIC: Select Navigation based on Role ---
+  let items = studentNavigation; // Fallback
+  
+  if (user?.role === 'admin') items = adminNavigation;
+  else if (user?.role === 'faculty') items = facultyNavigation;
+  else if (user?.role === 'student') items = studentNavigation;
+  // ----------------------------------------------
 
   const updateSidebarMode = (sidebarSettings) => {
     let activeLayoutSettingsName = settings.activeLayout + "Settings";
@@ -50,7 +66,7 @@ export default function Sidenav({ items, children }) {
     <Fragment>
       <StyledScrollBar options={{ suppressScrollX: true }}>
         {children}
-        {/* Render the items passed down from the parent */}
+        {/* Render the role-specific items */}
         <ParcVerticalNav items={items} />
       </StyledScrollBar>
 
