@@ -16,5 +16,6 @@ export const facultyNavigation = [
   { name: 'My Dashboard', path: '/dashboard/default', icon: 'dashboard' },
   { label: 'Professional', type: 'label' },
   { name: 'My Profile', path: '/onboarding/faculty', icon: 'school' },
+  { name: 'personal info', path: '/onboarding/personal_info', icon: 'person' },
 ];
 

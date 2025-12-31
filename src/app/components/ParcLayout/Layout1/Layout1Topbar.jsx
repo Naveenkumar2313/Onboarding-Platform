@@ -1,131 +1,136 @@
-import { memo } from "react";
-import { Link } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
-import styled from "@mui/material/styles/styled";
-import useTheme from "@mui/material/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Home from "@mui/icons-material/Home";
-import Menu from "@mui/icons-material/Menu";
-import Person from "@mui/icons-material/Person";
-import Settings from "@mui/icons-material/Settings";
-import WebAsset from "@mui/icons-material/WebAsset";
-import MailOutline from "@mui/icons-material/MailOutline";
-import StarOutline from "@mui/icons-material/StarOutline";
-import PowerSettingsNew from "@mui/icons-material/PowerSettingsNew";
+import { memo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Avatar,
+  Hidden,
+  IconButton,
+  MenuItem,
+  useMediaQuery,
+  Box,
+  styled,
+  useTheme
+} from '@mui/material';
 
-// import useAuth from "app/hooks/useAuth"; // Removed
-import useSettings from "app/hooks/useSettings";
-import { NotificationProvider } from "app/contexts/NotificationContext";
+import { ParcMenu, ParcSearchBox } from 'app/components';
+import { themeShadows } from 'app/components/ParcTheme/themeColors';
+import { NotificationProvider } from 'app/contexts/NotificationContext';
+import useAuth from 'app/hooks/useAuth'; // Import useAuth
+import useSettings from 'app/hooks/useSettings';
+import { topBarHeight } from 'app/utils/constant';
 
-import { Span } from "app/components/Typography";
-// import ShoppingCart from "app/components/ShoppingCart"; // Removed
-import { ParcMenu, ParcSearchBox } from "app/components";
-import { NotificationBar } from "app/components/NotificationBar";
-import { themeShadows } from "app/components/ParcTheme/themeColors";
-import { topBarHeight } from "app/utils/constant";
+import NotificationBar from '../../NotificationBar/NotificationBar';
 
-// STYLED COMPONENTS
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.text.primary
 }));
 
-const TopbarRoot = styled("div")({
+const TopbarRoot = styled('div')(({ theme }) => ({
   top: 0,
   zIndex: 96,
-  height: topBarHeight,
+  transition: 'all 0.3s ease',
   boxShadow: themeShadows[8],
-  transition: "all 0.3s ease"
-});
+  height: topBarHeight
+}));
 
-const TopbarContainer = styled("div")(({ theme }) => ({
-  padding: "8px",
+const TopbarContainer = styled(Box)(({ theme }) => ({
+  padding: '8px',
   paddingLeft: 18,
   paddingRight: 20,
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   background: theme.palette.primary.main,
-  [theme.breakpoints.down("sm")]: { paddingLeft: 16, paddingRight: 16 },
-  [theme.breakpoints.down("xs")]: { paddingLeft: 14, paddingRight: 16 }
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: 16,
+    paddingRight: 16
+  },
+  [theme.breakpoints.down('xs')]: {
+    paddingLeft: 14,
+    paddingRight: 16
+  }
 }));
 
-const UserMenu = styled("div")({
-  padding: 4,
-  display: "flex",
+const UserMenu = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  cursor: 'pointer',
   borderRadius: 24,
-  cursor: "pointer",
-  alignItems: "center",
-  "& span": { margin: "0 8px" }
-});
+  padding: 4,
+  '& span': { margin: '0 8px' }
+}));
 
 const StyledItem = styled(MenuItem)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: 'flex',
+  alignItems: 'center',
   minWidth: 185,
-  "& a": {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    textDecoration: "none"
+  '& a': {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none'
   },
-  "& span": { marginRight: "10px", color: theme.palette.text.primary }
-}));
-
-const IconBox = styled("div")(({ theme }) => ({
-  display: "inherit",
-  [theme.breakpoints.down("md")]: { display: "none !important" }
+  '& span': { marginRight: '10px', color: theme.palette.text.primary }
 }));
 
 const Layout1Topbar = () => {
   const theme = useTheme();
   const { settings, updateSettings } = useSettings();
-  // const { logout, user } = useAuth(); // Removed
-  const isMdScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const { logout, user } = useAuth(); // Get logout function and user
+  const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
 
   const updateSidebarMode = (sidebarSettings) => {
-    updateSettings({ layout1Settings: { leftSidebar: { ...sidebarSettings } } });
+    updateSettings({
+      layout1Settings: {
+        leftSidebar: {
+          ...settings.layout1Settings.leftSidebar,
+          ...sidebarSettings
+        }
+      }
+    });
   };
 
   const handleSidebarToggle = () => {
     let { layout1Settings } = settings;
     let mode;
     if (isMdScreen) {
-      mode = layout1Settings.leftSidebar.mode === "close" ? "mobile" : "close";
+      mode = layout1Settings.leftSidebar.mode === 'close' ? 'mobile' : 'close';
     } else {
-      mode = layout1Settings.leftSidebar.mode === "full" ? "close" : "full";
+      mode = layout1Settings.leftSidebar.mode === 'full' ? 'close' : 'full';
     }
     updateSidebarMode({ mode });
   };
 
-  // Static user placeholder
-  const user = { name: "User", avatar: "" };
-  const logout = () => {};
+  // LOGOUT FUNCTION
+  const handleLogout = async () => {
+    try {
+      await logout(); // Clears local storage and auth state
+      navigate('/session/signin'); // Force redirect to signin
+    } catch (e) {
+      console.error("Logout failed:", e);
+    }
+  };
 
   return (
     <TopbarRoot>
       <TopbarContainer>
         <Box display="flex">
           <StyledIconButton onClick={handleSidebarToggle}>
-            <Menu />
+            <span className="material-icons">menu</span>
           </StyledIconButton>
 
-          <IconBox>
+          <Hidden mdDown>
             <StyledIconButton>
-              <MailOutline />
+              <span className="material-icons">mail_outline</span>
             </StyledIconButton>
-
             <StyledIconButton>
-              <WebAsset />
+              <span className="material-icons">web_asset</span>
             </StyledIconButton>
-
             <StyledIconButton>
-              <StarOutline />
+              <span className="material-icons">star_outline</span>
             </StyledIconButton>
-          </IconBox>
+          </Hidden>
         </Box>
 
         <Box display="flex" alignItems="center">
@@ -135,39 +140,39 @@ const Layout1Topbar = () => {
             <NotificationBar />
           </NotificationProvider>
 
-          {/* <ShoppingCart /> Removed */}
-
           <ParcMenu
             menuButton={
               <UserMenu>
-                <Span>
-                  Hi <strong>{user.name}</strong>
-                </Span>
-
-                <Avatar src={user.avatar} sx={{ cursor: "pointer" }} />
+                  <span style={{ color: 'black' }}>
+                    Hi, <strong>{user?.name || 'User'}</strong>
+                  </span>
+                <Avatar src={user?.avatar} sx={{ cursor: 'pointer' }} />
               </UserMenu>
-            }>
+            }
+          >
             <StyledItem>
               <Link to="/">
-                <Home />
-                <Span sx={{ marginInlineStart: 1 }}>Home</Span>
+                <span className="material-icons">home</span>
+                <span className="pl-2">Home</span>
               </Link>
             </StyledItem>
 
             <StyledItem>
-              {/* Profile item, no redirect */}
-              <Person />
-              <Span sx={{ marginInlineStart: 1 }}>Profile</Span>
+              <Link to="/page-layouts/user-profile">
+                <span className="material-icons">person</span>
+                <span className="pl-2">Profile</span>
+              </Link>
             </StyledItem>
 
             <StyledItem>
-              <Settings />
-              <Span sx={{ marginInlineStart: 1 }}>Settings</Span>
+              <span className="material-icons">settings</span>
+              <span className="pl-2">Settings</span>
             </StyledItem>
 
-            <StyledItem onClick={logout}>
-              <PowerSettingsNew />
-              <Span sx={{ marginInlineStart: 1 }}>Logout</Span>
+            {/* LOGOUT BUTTON */}
+            <StyledItem onClick={handleLogout}>
+              <span className="material-icons">power_settings_new</span>
+              <span className="pl-2">Logout</span>
             </StyledItem>
           </ParcMenu>
         </Box>
